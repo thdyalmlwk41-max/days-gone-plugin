@@ -25,6 +25,7 @@ jobs:
 
       - name: Build SPRX
         run: |
+          cd CE
           cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=$HOME/OOPS4Toolchain/samples/ps4.toolchain.cmake
           cmake --build build
 
@@ -32,5 +33,5 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: days_gone_900p_sprx
-          path: build/*.sprx
+          path: CE/build/*.sprx
           retention-days: 30
