@@ -1,6 +1,6 @@
 #include "days_gone_900p.h"
 #include <stdint.h>
-
+void resolve_ue4_functions(void);
 /* Target settings for 900p */
 /* 1080p = 1920x1080 */
 /* 900p = 1600x900 (or 1920x1080 with 75% resolution scale) */
