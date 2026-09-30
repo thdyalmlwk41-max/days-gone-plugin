@@ -2,55 +2,27 @@ name: Build Days Gone 900p Patch
 
 on:
   push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    branches: [ main, master ]
   workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     container:
-  image: ps4dev/orbisdev:latest
-      options: --user root
+      image: ps4dev/orbisdev:latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
 
-      - name: Install dependencies
+      - name: Build SPRX
         run: |
-          apt-get update && apt-get install -y \
-            cmake \
-            ninja-build \
-            python3 \
-            git
-
-      - name: Configure CMake
-        run: |
-          cmake -B build -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE=/opt/ps4/toolchain.cmake \
-            -DCMAKE_BUILD_TYPE=Release
-
-      - name: Build
-        run: |
-          cmake --build build --config Release
-
-      - name: Verify output
-        run: |
-          ls -la build/
-          file build/days_gone_900p.sprx
+          cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=$ORBISDEV/toolchain.cmake
+          cmake --build build
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: days_gone_900p_sprx
-          path: build/days_gone_900p.sprx
+          path: build/*.sprx
           retention-days: 30
-
-      - name: Create release (on tag)
-        if: startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v1
-        with:
-          files: build/days_gone_900p.sprx
-          generate_release_notes: true
