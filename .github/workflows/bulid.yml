@@ -16,7 +16,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build clang lld
+          sudo apt-get install -y cmake ninja-build clang lld git
 
       - name: Setup OpenOrbis SDK
         run: |
@@ -25,8 +25,9 @@ jobs:
 
       - name: Build SPRX
         run: |
+          export OO_PS4_TOOLCHAIN=$HOME/OOPS4Toolchain
           cd CE
-          cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=$HOME/OOPS4Toolchain/samples/ps4.toolchain.cmake
+          cmake -B build -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$HOME/OOPS4Toolchain/toolchain/Toolchain.cmake
           cmake --build build
 
       - name: Upload artifact
