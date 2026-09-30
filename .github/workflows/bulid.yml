@@ -22,7 +22,6 @@ jobs:
         run: |
           git clone --recursive https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain.git $HOME/OOPS4Toolchain
           cd $HOME/OOPS4Toolchain
-          # إعداد مسارات Toolchain
           if [ -f "extract.sh" ]; then chmod +x extract.sh && ./extract.sh; fi
 
       - name: Build SPRX
@@ -30,9 +29,7 @@ jobs:
           export OO_PS4_TOOLCHAIN=$HOME/OOPS4Toolchain
           cd CE
           
-          # البحث عن ملف toolchain المتاحة تلقائياً
           TOOLCHAIN_FILE=$(find $HOME/OOPS4Toolchain -name "*.toolchain.cmake" -o -name "Toolchain.cmake" | head -n 1)
-          echo "Using Toolchain: $TOOLCHAIN_FILE"
           
           cmake -B build -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE
           cmake --build build
@@ -41,5 +38,8 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: days_gone_900p_sprx
-          path: CE/build/*.sprx
+          path: |
+            CE/build/*.sprx
+            CE/build/**/*.sprx
+            **/*.sprx
           retention-days: 30
