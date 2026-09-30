@@ -1,4 +1,5 @@
 #include "days_gone_900p.h"
+#include <string.h>
 #include <stdint.h>
 
 /* Hook trampoline structure */
