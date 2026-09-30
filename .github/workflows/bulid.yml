@@ -8,16 +8,24 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: ps4dev/orbisdev:latest
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+
+      - name: Install Dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake ninja-build clang lld
+
+      - name: Setup OpenOrbis SDK
+        run: |
+          git clone --recursive https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain.git $HOME/OOPS4Toolchain
+          echo "OO_PS4_TOOLCHAIN=$HOME/OOPS4Toolchain" >> $GITHUB_ENV
 
       - name: Build SPRX
         run: |
-          cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=$ORBISDEV/toolchain.cmake
+          cmake -B build -G Ninja -DCMAKE_TOOLCHAIN_FILE=$HOME/OOPS4Toolchain/samples/ps4.toolchain.cmake
           cmake --build build
 
       - name: Upload artifact
