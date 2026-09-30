@@ -34,12 +34,17 @@ jobs:
           cmake -B build -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE
           cmake --build build
 
+      - name: Find output files
+        run: |
+          echo "=== Displaying created build files ==="
+          find . -type f
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: days_gone_900p_sprx
           path: |
-            CE/build/*.sprx
-            CE/build/**/*.sprx
-            **/*.sprx
+            CE/build/*
+            !CE/build/CMakeFiles
+            !CE/build/**/CMakeFiles
           retention-days: 30
