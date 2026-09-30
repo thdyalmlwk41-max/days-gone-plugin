@@ -16,18 +16,25 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y cmake ninja-build clang lld git
+          sudo apt-get install -y cmake build-essential make clang lld git
 
       - name: Setup OpenOrbis SDK
         run: |
           git clone --recursive https://github.com/OpenOrbis/OpenOrbis-PS4-Toolchain.git $HOME/OOPS4Toolchain
-          echo "OO_PS4_TOOLCHAIN=$HOME/OOPS4Toolchain" >> $GITHUB_ENV
+          cd $HOME/OOPS4Toolchain
+          # إعداد مسارات Toolchain
+          if [ -f "extract.sh" ]; then chmod +x extract.sh && ./extract.sh; fi
 
       - name: Build SPRX
         run: |
           export OO_PS4_TOOLCHAIN=$HOME/OOPS4Toolchain
           cd CE
-          cmake -B build -G "Unix Makefiles" -DCMAKE_TOOLCHAIN_FILE=$HOME/OOPS4Toolchain/toolchain/Toolchain.cmake
+          
+          # البحث عن ملف toolchain المتاحة تلقائياً
+          TOOLCHAIN_FILE=$(find $HOME/OOPS4Toolchain -name "*.toolchain.cmake" -o -name "Toolchain.cmake" | head -n 1)
+          echo "Using Toolchain: $TOOLCHAIN_FILE"
+          
+          cmake -B build -DCMAKE_TOOLCHAIN_FILE=$TOOLCHAIN_FILE
           cmake --build build
 
       - name: Upload artifact
